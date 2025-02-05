@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AQUA GUARD - Horizontal Layout</title>
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+            background: #f0f8ff;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .container-row {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .location-container {
+            width: 30%;
+            background: #ffffff;
+            border: 2px solid #3498db;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin: 10px;
+            text-align: center;
+        }
+
+        h3 {
+            font-size: 1.5em;
+            color: #3498db;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            width: 100%;
+            height: 200px;
+            border: 2px solid #2c3e50;
+            background: linear-gradient(to top, #3498db, #87CEEB);
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .level {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background-color: #1abc9c;
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            transition: height 0.5s;
+        }
+
+        .warning {
+            margin-top: 15px;
+            font-size: 1.1em;
+            font-weight: bold;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .normal {
+            background-color: #2ecc71;
+        }
+
+        .alert {
+            background-color: #f39c12;
+        }
+
+        .danger {
+            background-color: #e74c3c;
+        }
+
+        .pumpStatus, .heightDisplay, .rainStatus {
+            font-size: 1em;
+            color: #2c3e50;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #95a5a6;
+        }
+
+        footer a {
+            color: #3498db;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>AQUA GUARD</h1>
+    <div class="container-row">
+        <!-- Bucayao River -->
+        <div id="bucayao" class="location-container">
+            <h3>Bucayao River</h3>
+            <div id="containerBucayao" class="container">
+                <div id="levelBucayao" class="level" style="height: 0%;">0 cm</div>
+            </div>
+            <div id="heightDisplayBucayao" class="heightDisplay">Flood Height: 0 cm</div>
+            <div id="warningBucayao" class="warning normal">Normal</div>
+            <div id="pumpStatusBucayao" class="pumpStatus">Pump Status: OFF</div>
+            <div id="rainStatusBucayao" class="rainStatus">Rain Status: None</div>
+        </div>
+
+        <!-- Nangka River -->
+        <div id="nangka" class="location-container">
+            <h3>Bagto River</h3>
+            <div id="containerNangka" class="container">
+                <div id="levelNangka" class="level" style="height: 0%;">0 cm</div>
+            </div>
+            <div id="heightDisplayNangka" class="heightDisplay">Flood Height: 0 cm</div>
+            <div id="warningNangka" class="warning normal">Normal</div>
+            <div id="pumpStatusNangka" class="pumpStatus">Pump Status: OFF</div>
+            <div id="rainStatusNangka" class="rainStatus">Rain Status: None</div>
+        </div>
+
+        <!-- Balete River -->
+        <div id="balete" class="location-container">
+            <h3>Balete River</h3>
+            <div id="containerBalete" class="container">
+                <div id="levelBalete" class="level" style="height: 0%;">0 cm</div>
+            </div>
+            <div id="heightDisplayBalete" class="heightDisplay">Flood Height: 0 cm</div>
+            <div id="warningBalete" class="warning normal">Normal</div>
+            <div id="pumpStatusBalete" class="pumpStatus">Pump Status: OFF</div>
+            <div id="rainStatusBalete" class="rainStatus">Rain Status: None</div>
+        </div>
+    </div>
+
+    <footer>
+        Powered by AQUA GUARD &middot; <a href="#">Learn More</a>
+    </footer>
+
+    <script>
+        const locations = {
+            "Bucayao River": { level: 0, elementPrefix: "Bucayao" },
+            "Bagto River": { level: 0, elementPrefix: "Bagto" },
+            "Balete River": { level: 0, elementPrefix: "Balete" }
+        };
+
+        const maxFloodHeight = 300; // Maximum height in cm
+        const pumpThreshold = 200; // Pump activates at 200 cm
+
+        function updateFloodLevel(location, floodHeight) {
+            const prefix = locations[location].elementPrefix;
+            const heightPercentage = Math.min((floodHeight / maxFloodHeight) * 100, 100);
+
+            // Update level
+            const levelElement = document.getElementById(`level${prefix}`);
+            levelElement.style.height = heightPercentage + '%';
+            levelElement.textContent = floodHeight + ' cm';
+
+            // Update display
+            const heightDisplay = document.getElementById(`heightDisplay${prefix}`);
+            heightDisplay.textContent = `Flood Height: ${floodHeight} cm`;
+
+            // Update warning levels
+            const warningElement = document.getElementById(`warning${prefix}`);
+            if (floodHeight < 100) {
+                warningElement.textContent = 'Normal';
+                warningElement.className = 'warning normal';
+            } else if (floodHeight < 200) {
+                warningElement.textContent = 'Alert';
+                warningElement.className = 'warning alert';
+            } else {
+                warningElement.textContent = 'Danger';
+                warningElement.className = 'warning danger';
+            }
+
+            // Update pump status
+            const pumpStatus = document.getElementById(`pumpStatus${prefix}`);
+            if (floodHeight >= pumpThreshold) {
+                pumpStatus.textContent = 'Pump Status: RUNNING';
+                pumpStatus.style.color = '#e74c3c';
+            } else {
+                pumpStatus.textContent = 'Pump Status: OFF';
+                pumpStatus.style.color = '#2ecc71';
+            }
+
+            // Update rain status
+            const rainStatus = document.getElementById(`rainStatus${prefix}`);
+            if (floodHeight < 50) {
+                rainStatus.textContent = 'Rain Status: None';
+            } else if (floodHeight < 150) {
+                rainStatus.textContent = 'Rain Status: Light Rain';
+            } else if (floodHeight < 250) {
+                rainStatus.textContent = 'Rain Status: Moderate Rain';
+            } else {
+                rainStatus.textContent = 'Rain Status: Heavy Rain';
+            }
+        }
+
+        function simulateData() {
+            // Pick a random location to update
+            const locationKeys = Object.keys(locations);
+            const randomIndex = Math.floor(Math.random() * locationKeys.length);
+            const randomLocation = locationKeys[randomIndex];
+
+            // Generate random height for this location
+            const randomHeight = Math.floor(Math.random() * 320);
+            locations[randomLocation].level = randomHeight;
+
+            // Update only the selected location
+            updateFloodLevel(randomLocation, randomHeight);
+        }
+
+        // Simulate data updates every 2 seconds
+        setInterval(simulateData, 2000);
+    </script>
+</body>
+</html>
